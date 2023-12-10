@@ -17,14 +17,8 @@ export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 export default function Index() {
   return (
     <article>
-      <h2>preferentialoffer</h2>
+      <h2>gabriel florit</h2>
       <header>
-        <p>
-          here goes text and some more and some more and maybe some more and
-          some more because it should be two lines
-        </p>
-        <h2>Gabriel Florit</h2>
-        <p>here goes text and some more and some more and maybe some more</p>
         <h1>The new compendium</h1>
         <h3>A web log of computational geometry and visual design</h3>
       </header>
