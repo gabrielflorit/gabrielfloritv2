@@ -1,5 +1,6 @@
 import type { MetaFunction, LinksFunction } from "@remix-run/cloudflare";
 import { WebWorkerSaysHello } from "~/components/posts/WebWorkerSaysHello/index";
+import { DrawRandomBitmap } from "~/components/posts/DrawRandomBitmap/index";
 import styles from "~/styles/index.css";
 
 export const meta: MetaFunction = () => {
@@ -24,6 +25,7 @@ export default function Index() {
       </header>
       <section>
         <WebWorkerSaysHello />
+        <DrawRandomBitmap />
       </section>
 
       <nav>

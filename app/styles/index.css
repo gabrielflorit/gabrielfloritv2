@@ -103,3 +103,7 @@ section p {
   text-align: justify;
   margin-bottom: 1rem;
 }
+
+canvas {
+  image-rendering: pixelated;
+}

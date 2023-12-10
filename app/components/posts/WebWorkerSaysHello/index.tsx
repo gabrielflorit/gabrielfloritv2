@@ -11,7 +11,7 @@ export function WebWorkerSaysHello() {
   });
 
   return (
-    <section>
+    <section className="mb-16">
       <h3 className="uppercase">Web Worker says hello</h3>
       <p>
         The following paragraph is populated by data coming from a Web Worker.
