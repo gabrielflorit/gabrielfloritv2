@@ -6,9 +6,9 @@ export function DrawRandomBitmap() {
     undefined
   );
 
-  let width = 16;
-  let height = 16;
-  let pixelSize = 16;
+  let width = 128;
+  let height = 128;
+  let pixelSize = 4;
   let worker = useRef<Worker | null>(null);
 
   useEffect(() => {

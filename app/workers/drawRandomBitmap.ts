@@ -1,4 +1,5 @@
-import { getRandomInt } from "~/utils/getRandomInt";
+// import { getRandomInt } from "~/utils/getRandomInt";
+import { drawLine } from "~/canvasAPI/drawLine";
 
 onmessage = function (event: { data: { width: number; height: number } }) {
   let { width, height } = event.data;
@@ -8,12 +9,18 @@ onmessage = function (event: { data: { width: number; height: number } }) {
   if (ctx) {
     let arrayBuffer = new ArrayBuffer(width * height * 4);
     let clampedArray = new Uint8ClampedArray(arrayBuffer);
-    for (let i = 0; i < width * height * 4; i += 4) {
-      clampedArray[0 + i] = getRandomInt(0, 255);
-      clampedArray[1 + i] = getRandomInt(0, 255);
-      clampedArray[2 + i] = getRandomInt(0, 255);
-      clampedArray[3 + i] = 255;
+
+    function setPixel(x: number, y: number) {
+      x = Math.floor(x);
+      y = Math.floor(y);
+      clampedArray[y * width * 4 + x * 4 + 0] = 0;
+      clampedArray[y * width * 4 + x * 4 + 1] = 0;
+      clampedArray[y * width * 4 + x * 4 + 2] = 0;
+      clampedArray[y * width * 4 + x * 4 + 3] = 255;
     }
+
+    drawLine(0, 0, width - 1, height - 1, setPixel);
+
     postMessage(clampedArray, [clampedArray.buffer] as any);
   }
 };
