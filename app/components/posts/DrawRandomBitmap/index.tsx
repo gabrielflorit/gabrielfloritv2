@@ -1,37 +1,21 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getBitmapFromWorker } from "./worker.client";
+import { useInterval } from "~/utils/useSetInterval";
 
 export function DrawRandomBitmap() {
-  let width = 8;
-  let height = 8;
-  let canvasRef = useRef<HTMLCanvasElement>(null);
+  let [clampedArray, setClampedArray] = useState<Uint8ClampedArray | undefined>(
+    undefined
+  );
 
-  useEffect(() => {
-    getBitmapFromWorker(function (data: any) {
-      let canvas = canvasRef.current;
-      if (canvas) {
-        let ctx = canvas.getContext("2d");
-        if (ctx && data.length) {
-          let imageData = new ImageData(data, 8);
-          ctx.putImageData(imageData, 0, 0);
-        }
-      }
-    });
-  });
+  let width = 16;
+  let height = 16;
+  let pixelSize = 16;
 
-  function handleClick() {
-    getBitmapFromWorker(function (data: any) {
-      let canvas = canvasRef.current;
-      if (canvas) {
-        let ctx = canvas.getContext("2d");
-        if (ctx && data.length) {
-          let imageData = new ImageData(data, 8);
-          ctx.putImageData(imageData, 0, 0);
-        }
-      }
+  useInterval(() => {
+    getBitmapFromWorker(width, height, function (data: Uint8ClampedArray) {
+      setClampedArray(data);
     });
-  }
-  let pixelSize = 32;
+  }, 1000);
 
   return (
     <section className="mb-16">
@@ -40,16 +24,46 @@ export function DrawRandomBitmap() {
         The following canvas element is drawn with bitmaps computed by a Web
         Worker.
       </p>
-      <canvas
-        className="border"
-        ref={canvasRef}
+      <Canvas
         width={width}
-        height={width}
-        style={{ width: width * pixelSize, height: height * pixelSize }}
+        height={height}
+        pixelSize={pixelSize}
+        clampedArray={clampedArray}
       />
-      <button className="bg-black text-white p-2" onClick={handleClick}>
-        Draw new
-      </button>
     </section>
+  );
+}
+
+function Canvas({
+  width,
+  height,
+  pixelSize,
+  clampedArray,
+}: {
+  width: number;
+  height: number;
+  pixelSize: number;
+  clampedArray?: Uint8ClampedArray;
+}) {
+  let canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    let canvas = canvasRef.current;
+    if (canvas) {
+      let ctx = canvas.getContext("2d");
+      if (ctx && clampedArray) {
+        let imageData = new ImageData(clampedArray, width);
+        ctx.putImageData(imageData, 0, 0);
+      }
+    }
+  });
+  return (
+    <canvas
+      className="border"
+      ref={canvasRef}
+      width={width}
+      height={width}
+      style={{ width: width * pixelSize, height: height * pixelSize }}
+    />
   );
 }
