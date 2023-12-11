@@ -1,5 +1,5 @@
-var blob = new Blob([
-  `(() => {
+"use strict";
+(() => {
   // app/utils/getRandomInt.ts
   function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -24,15 +24,4 @@ var blob = new Blob([
       postMessage(clampedArray, [clampedArray.buffer]);
     }
   };
-})();`,
-]);
-
-var blobURL = this.URL.createObjectURL(blob);
-var worker = new Worker(blobURL);
-
-let event = {
-  width: 16,
-  height: 16,
-};
-
-worker.postMessage(event);
+})();

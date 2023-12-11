@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// import { getBitmapFromWorker } from "./worker.client";
 import { useInterval } from "~/utils/useSetInterval";
 
 export function DrawRandomBitmap() {
@@ -14,19 +13,22 @@ export function DrawRandomBitmap() {
 
   useEffect(() => {
     if (!worker.current) {
-      var blobURL = URL.createObjectURL(blob);
-      worker.current = new Worker(blobURL);
+      worker.current = new Worker("workers/drawRandomBitmap.js");
     }
   });
 
   useInterval(() => {
     if (worker.current) {
       worker.current.postMessage({ width, height });
-      worker.current.onmessage = function (e: any) {
-        setClampedArray(e.data);
+      worker.current.onmessage = function ({
+        data,
+      }: {
+        data: Uint8ClampedArray;
+      }) {
+        setClampedArray(data);
       };
     }
-  }, 1000 / 60);
+  }, 1000);
 
   return (
     <section className="mb-16">
@@ -78,32 +80,3 @@ function Canvas({
     />
   );
 }
-
-var blob = new Blob([
-  `(() => {
-  // app/utils/getRandomInt.ts
-  function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-
-  // app/workers/drawRandomBitmap.ts
-  onmessage = function(event) {
-    let { width, height } = event.data;
-    let offscreen = new OffscreenCanvas(width, height);
-    let ctx = offscreen.getContext("2d");
-    if (ctx) {
-      let arrayBuffer = new ArrayBuffer(width * height * 4);
-      let clampedArray = new Uint8ClampedArray(arrayBuffer);
-      for (let i = 0; i < width * height * 4; i += 4) {
-        clampedArray[0 + i] = getRandomInt(0, 255);
-        clampedArray[1 + i] = getRandomInt(0, 255);
-        clampedArray[2 + i] = getRandomInt(0, 255);
-        clampedArray[3 + i] = 255;
-      }
-      postMessage(clampedArray, [clampedArray.buffer]);
-    }
-  };
-})();`,
-]);
