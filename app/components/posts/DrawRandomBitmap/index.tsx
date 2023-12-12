@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useInterval } from "~/utils/useSetInterval";
+import { Canvas } from "./Canvas";
 
 export function DrawRandomBitmap() {
   let [clampedArray, setClampedArray] = useState<Uint8ClampedArray | undefined>(
@@ -19,7 +20,11 @@ export function DrawRandomBitmap() {
 
   useInterval(() => {
     if (worker.current) {
-      worker.current.postMessage({ width, height });
+      worker.current.postMessage({
+        width,
+        height,
+        code: "line(0, 0, 32, 64); line(0, 0, 10, 10)",
+      });
       worker.current.onmessage = function ({
         data,
       }: {
@@ -44,39 +49,5 @@ export function DrawRandomBitmap() {
         clampedArray={clampedArray}
       />
     </section>
-  );
-}
-
-function Canvas({
-  width,
-  height,
-  pixelSize,
-  clampedArray,
-}: {
-  width: number;
-  height: number;
-  pixelSize: number;
-  clampedArray?: Uint8ClampedArray;
-}) {
-  let canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    let canvas = canvasRef.current;
-    if (canvas) {
-      let ctx = canvas.getContext("2d");
-      if (ctx && clampedArray) {
-        let imageData = new ImageData(clampedArray, width);
-        ctx.putImageData(imageData, 0, 0);
-      }
-    }
-  });
-  return (
-    <canvas
-      className="border"
-      ref={canvasRef}
-      width={width}
-      height={width}
-      style={{ width: width * pixelSize, height: height * pixelSize }}
-    />
   );
 }

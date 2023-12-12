@@ -1,8 +1,11 @@
-// import { getRandomInt } from "~/utils/getRandomInt";
+/* eslint-disable no-eval */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { drawLine } from "~/canvasAPI/drawLine";
 
-onmessage = function (event: { data: { width: number; height: number } }) {
-  let { width, height } = event.data;
+onmessage = function (event: {
+  data: { width: number; height: number; code: string };
+}) {
+  let { width, height, code } = event.data;
 
   let offscreen = new OffscreenCanvas(width, height);
   let ctx = offscreen.getContext("2d");
@@ -19,7 +22,13 @@ onmessage = function (event: { data: { width: number; height: number } }) {
       clampedArray[y * width * 4 + x * 4 + 3] = 255;
     }
 
-    drawLine(0, 0, width - 1, height - 1, setPixel);
+    {
+      function line(x1: number, y1: number, x2: number, y2: number) {
+        drawLine(x1, y1, x2, y2, setPixel);
+      }
+
+      eval(code);
+    }
 
     postMessage(clampedArray, [clampedArray.buffer] as any);
   }
